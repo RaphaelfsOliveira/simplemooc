@@ -15,20 +15,22 @@
               <li class="pure-menu-heading">
                 Bem vindo, {{ user.get_short_name }}
               </li>
+              {% block menu_options %}
                 {% my_courses user %}
                 <li class="pure-menu-heading">Configurações de Conta</li>
                 <li>
                   <a href="{% url 'accounts:edit' %}">
-                    <i class="icon-cog"></i>
+                    <i class="fa fa-cog"></i>
                     Editar Informações
                   </a>
                 </li>
                 <li>
                   <a href="{% url 'accounts:password' %}">
-                    <i class="icon-lock"></i>
+                    <i class="fa fa-lock"></i>
                     Editar Senha
                   </a>
                 </li>
+                {% endblock %}
             </ul>
         </div>
     </div>
