@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
 from .models import Course, Enrollment, Announcements
-from .forms import ContactCourse
+from .forms import ContactCourse, CommentForm
 
 # Create your views here.
 def index(request):
@@ -93,10 +93,20 @@ def show_announcement(request, slug, id):
         if not enrollment.is_approved():
             messages.error(request, 'A sua inscrição está pendente')
             return redirect('accounts:dashboard')
+
     announcement = get_object_or_404(course.announcements.all(), id=id)
+    form = CommentForm(request.POST or None)
+    if form.is_valid():
+        comment = form.save(commit=False)
+        comment.user = request.user
+        comment.announcement = announcement
+        comment.save()
+        messages.success(request, 'Seu comentário foi enviado com sucesso')
+
     context = {
         'course': course,
         'announcement': announcement,
+        'form': form,
     }
     template = 'courses/show_announcement.html'
     return render(request, template, context)
