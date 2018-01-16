@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Course
+from .models import Course, Enrollment, Announcements, Comment
 
 #opções para mostrar no painel do Django admin
 class CourseAdmin(admin.ModelAdmin):
@@ -11,5 +11,12 @@ class CourseAdmin(admin.ModelAdmin):
     #campo para preenchimento automatico para alguns campos
     prepopulated_fields = {'slug': ('name',)}
 
+
+class EnrollmentAdmin(admin.ModelAdmin):
+
+    list_display = ['course', 'user', 'status', 'created_at']
+
 # Register your models here. e models Admin
 admin.site.register(Course, CourseAdmin)
+admin.site.register(Enrollment, EnrollmentAdmin)
+admin.site.register([Announcements, Comment])
