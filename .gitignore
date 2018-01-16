@@ -7,10 +7,8 @@ __pycache__
 *.pyo
 *~
 
-
 # C extensions
 *.so
-
 
 # database
 *.sqlite3
