@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
-from .models import Course, Enrollment
+from .models import Course, Enrollment, Announcements
 from .forms import ContactCourse
 
 # Create your views here.
@@ -74,9 +74,7 @@ def undo_enrollment(request, slug):
 def announcements(request, slug):
     course = get_object_or_404(Course, slug=slug)
     if not request.user.is_staff:
-        enrollment = Enrollment.objects.get_object_or_404(Enrollment,
-                                                          user=request.user,
-                                                          course=course)
+        enrollment = get_object_or_404(Enrollment, user=request.user, course=course)
         if not enrollment.is_approved():
             messages.error(request, 'A sua inscrição está pendente')
             return redirect('accounts:dashboard')
@@ -85,4 +83,20 @@ def announcements(request, slug):
         'announcements': course.announcements.all(),
     }
     template = 'courses/announcements.html'
+    return render(request, template, context)
+
+@login_required
+def show_announcement(request, slug, id):
+    course = get_object_or_404(Course, slug=slug)
+    if not request.user.is_staff:
+        enrollment = get_object_or_404(Enrollment, user=request.user, course=course)
+        if not enrollment.is_approved():
+            messages.error(request, 'A sua inscrição está pendente')
+            return redirect('accounts:dashboard')
+    announcement = get_object_or_404(course.announcements.all(), id=id)
+    context = {
+        'course': course,
+        'announcement': announcement,
+    }
+    template = 'courses/show_announcement.html'
     return render(request, template, context)
