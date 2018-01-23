@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Course, Enrollment, Announcements, Comment
+from .models import (Course, Enrollment, Announcements, Comment, Lesson, Material)
 
 #opções para mostrar no painel do Django admin
 class CourseAdmin(admin.ModelAdmin):
@@ -16,7 +16,23 @@ class EnrollmentAdmin(admin.ModelAdmin):
 
     list_display = ['course', 'user', 'status', 'created_at']
 
+
+class MaterialInlineAdmin(admin.StackedInline):
+
+    model = Material
+
+
+class LessonAdmin(admin.ModelAdmin):
+
+    list_display = ['name', 'number', 'course', 'release_date']
+    search_fields = ['name', 'description']
+    list_filter = ['created_at'] # filtragem lateral
+
+    inlines = [MaterialInlineAdmin]
+
+
 # Register your models here. e models Admin
 admin.site.register(Course, CourseAdmin)
 admin.site.register(Enrollment, EnrollmentAdmin)
-admin.site.register([Announcements, Comment])
+admin.site.register([Announcements, Comment, Material])
+admin.site.register(Lesson, LessonAdmin)
