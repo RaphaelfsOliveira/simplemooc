@@ -131,3 +131,13 @@ def lesson(request, slug, id):
         'lesson': lesson
     }
     return render(request, template, context)
+
+@login_required
+@enrollment_required
+def material(request, slug, pk):
+    course = request.course
+    material = get_object_or_404(Material, pk=pk, lesson__course=course)
+    lesson = material.lesson
+    if not request.user.is_staff and not lesson.is_available():
+        messages.error(request, 'Este material não pode ser baixado')
+        return redirect('courses:lessons', slug=course.slug, pk=lesson.pk)
