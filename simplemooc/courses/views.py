@@ -139,14 +139,14 @@ def lesson(request, slug, id):
 
 @login_required
 @enrollment_required
-def material(request, slug, pk):
+def material(request, slug, id):
     course = request.course
-    material = get_object_or_404(Material, pk=pk, lesson__course=course)
+    material = get_object_or_404(Material, id=id, lesson__course=course)
     lesson = material.lesson
 
     if not request.user.is_staff and not lesson.is_available():
         messages.error(request, 'Este material não está disponível')
-        return redirect('courses:lessons', slug=course.slug, pk=lesson.pk)
+        return redirect('courses:lesson', slug=course.slug, id=lesson.id)
 
     if not material.is_embedded():
         return redirect(material.file.url)

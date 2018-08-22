@@ -10,5 +10,6 @@ urlpatterns = [
     url(r'^(?P<slug>[\w_-]+)/anuncios/(?P<id>\d+)/$', views.show_announcement, name='show_announcement'),
     url(r'^(?P<slug>[\w_-]+)/aulas/$', views.lessons, name='lessons'),
     url(r'^(?P<slug>[\w_-]+)/aula/(?P<id>\d+)/$', views.lesson, name='lesson'),
+    url(r'^(?P<slug>[\w_-]+)/materiais/(?P<id>\d+)/$', views.material, name='material'),
     #url(r'^(?P<pk>\d+)/$', views.details, name='details'),
 ]
