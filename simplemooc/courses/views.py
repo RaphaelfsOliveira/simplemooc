@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
-from .models import Course, Enrollment, Announcements, Lesson
+from .models import Course, Enrollment, Announcements, Lesson, Material
 from .forms import ContactCourse, CommentForm
 from .decorators import enrollment_required
 
@@ -88,6 +88,7 @@ def show_announcement(request, slug, id):
     course = request.course
     announcement = get_object_or_404(course.announcements.all(), id=id)
     form = CommentForm(request.POST or None)
+
     if form.is_valid():
         comment = form.save(commit=False)
         comment.user = request.user
@@ -107,10 +108,12 @@ def show_announcement(request, slug, id):
 @enrollment_required
 def lessons(request, slug):
     course = request.course
-    template = 'courses/lessons.html'
     lessons = course.release_lessons()
+
     if request.user.is_staff:
         lessons = course.lessons.all()
+
+    template = 'courses/lessons.html'
     context = {
         'course': course,
         'lessons': lessons
@@ -122,9 +125,11 @@ def lessons(request, slug):
 def lesson(request, slug, id):
     course = request.course
     lesson = get_object_or_404(Lesson, id=id, course=course)
+
     if not request.user.is_staff and not lesson.is_available():
         messages.error(request, 'Esta aula não está disponível')
         return redirect('courses:lessons', slug=course.slug)
+
     template = 'courses/lesson.html'
     context = {
         'course': course,
@@ -138,6 +143,18 @@ def material(request, slug, pk):
     course = request.course
     material = get_object_or_404(Material, pk=pk, lesson__course=course)
     lesson = material.lesson
+
     if not request.user.is_staff and not lesson.is_available():
-        messages.error(request, 'Este material não pode ser baixado')
+        messages.error(request, 'Este material não está disponível')
         return redirect('courses:lessons', slug=course.slug, pk=lesson.pk)
+
+    if not material.is_embedded():
+        return redirect(material.file.url)
+
+    template = 'courses/material.html'
+    context = {
+        'course': course,
+        'lesson': lesson,
+        'material': material
+    }
+    return render(request, template, context)
