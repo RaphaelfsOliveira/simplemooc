@@ -29,29 +29,19 @@
             </thead>
             <tbody>
               {% for material in lesson.materials.all %}
-              <tr>                
+              <tr class="{% cycle '' 'pure-table-odd' %}">
                 <td>
-                    Vídeo de Apresentação
+                    {{ material }}
                 </td>
                 <td>
-                    <a href="#">
-                        <i class"fa fa-video-camera"></i>
-                        Acessar
-                    </a>
+                  {% if material.is_embedded %}
+                    <a href="#"><i class"fa fa-video-camera"></i>Acessar</a>
+                  {% else %}
+                    <a href="#"><i class"fa fa-download"></i>Baixar</a>
+                  {% endif %}
                 </td>
               </tr>
               {% endfor %}
-              <tr class="pure-table-odd">
-                  <td>
-                      Slides da Apresentação
-                  </td>
-                  <td>
-                      <a href="#">
-                          <i class"fa fa-download"></i>
-                          Baixar
-                      </a>
-                  </td>
-              </tr>
             </tbody>
         </table>
     </p>
